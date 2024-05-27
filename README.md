@@ -100,9 +100,9 @@
   - RNN (Best model loss : Train Loss: 0.5111, Val Loss: 0.5776)  
     ![rnn_loss_plot](https://github.com/bae-sohee/Language_Modeling/assets/123538321/004df5a5-f62a-4890-9bda-455bcb255a3b)
  
-2. Comparison of model-specific generation results (seed-specific model generation results)
+2. Comparing generation results across different seeds for model
     #### Generated Text Samples  
-    - This is the result of comparing text samples generated using various seed strings with LSTM and RNN models.
+    - This is the result of comparing text samples generated using various seed strings with LSTM and RNN models.(lstm_output_seed.txt, rnn_output_seed.txt)
     - The settings other than seed are the same. (temperature : 1.0, length : 100)
 
       | Seed      | LSTM                                                                                       | RNN                                                                                          |
@@ -123,7 +123,7 @@
 
     #### Generated Text Samples by Temperature
 
-    - This is the result of comparing text samples generated at various temperature settings with LSTM and RNN models.
+    - This is the result of comparing text samples generated at various temperature settings with LSTM and RNN models.(lstm_output_temperature.txt, rnn_output_temperature.txt)
     - The settings other than temperature are the same. (seed : "MENENIUS: ", length : 100)
 
       | Temperature | LSTM                                                                                       | RNN                                                                                          |
