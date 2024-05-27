@@ -3,7 +3,7 @@
 
 ### Assignment Objective
 - Vanilla RNN and LSTM models are implemented to compare their performance.
-- Analyzing the quality of text generated using various temperature parameters
+- Analyzing the quality of text generated using various temperature parameters.
 
 ## 1. Environment
 - Python version is 3.8.
@@ -25,27 +25,26 @@
   - Use the command **pip install -r requirements.txt** to install libraries.
 
 ## 2. Dataset
-- Run `dataset.py` to determine the length of the dataset.
+- Run `dataset.py` to check the length of the dataset.
 
   ```bash
   python dataset.py
   ```
+- The dataset uses **shakespeare.txt**.
 
   ```bash
-  shakespeare.txt
+    First Citizen:
+    Before we proceed any further, hear me speak.
 
-     First Citizen:
-     Before we proceed any further, hear me speak.
+    All:
+    Speak, speak.
 
-     All:
-     Speak, speak.
+    First Citizen:
+    You are all resolved rather to die than to famish?
 
-     First Citizen:
-     You are all resolved rather to die than to famish?
-
-     All:
-     Resolved. resolved.
-     ...
+    All:
+    Resolved. resolved.
+    ...
   ```
 
 ## 3. Implementation
@@ -59,17 +58,19 @@
   Training using the RNN model:  
   
   ```bash
-  python main.py --lstm
+  python main.py --rnn
   ```  
 
-- The default settings are as follows.
+- The default settings are as follows.  
     #### setting
     epoch = 200  
-    batch_size = 64
-    hidden_size = 256
-    optimizer = AdamW
+    batch_size = 64  
+    embedding_size = 128    
+    hidden_size = 256  
+    num_layers = 3  
+    optimizer = AdamW  
     lr = 0.0001  
-
+     
 - You need to run `generate.py`.  
   Create text with LSTM model:  
 
@@ -80,56 +81,63 @@
   Create text with RNN model:  
   
   ```bash
-  python main.py --lstm
+  python generate.py --rnn
   ```  
 
 - The default settings are as follows.
     #### args
-    seed = 'ROMEO: '  
-    temperature = 1.0
-    length = 100
-    output = 'generated_text.txt'  
+    seed = 'MENENIUS: '  
+    temperature = 1.0  
+    length = 100  
+    output = 'output.txt'  
 
 ## 4. Result
 
-- Loss for each model
-  - LSTM  
-  ![loss_plot_LSTM](https://github.com/bae-sohee/MNIST_Classification/assets/123538321/e0be35c8-21dd-4be8-929a-e36f9f793ed8)  
-  - RNN  
-  ![loss_plot_RNN](https://github.com/bae-sohee/MNIST_Classification/assets/123538321/a2b00775-09ff-40bd-85d4-eaff0f860855)  
+1. Loss for each model
+  - LSTM (Best model loss : Train Loss: 0.3537, Val Loss: 0.4221)  
+    ![lstm_loss_plot](https://github.com/bae-sohee/Language_Modeling/assets/123538321/b6353f11-7ffb-4c7b-a99f-6597b76b2436)  
+  
+  - RNN (Best model loss : Train Loss: 0.5111, Val Loss: 0.5776)  
+    ![rnn_loss_plot](https://github.com/bae-sohee/Language_Modeling/assets/123538321/004df5a5-f62a-4890-9bda-455bcb255a3b)
+ 
+2. Comparison of model-specific generation results (seed-specific model generation results)
+    #### Generated Text Samples  
+    - This is the result of comparing text samples generated using various seed strings with LSTM and RNN models.
+    - The settings other than seed are the same. (temperature : 1.0, length : 100)
+
+      | Seed      | LSTM                                                                                       | RNN                                                                                          |
+      |-----------|--------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+      | MENENIUS: | MENENIUS: 'tter it with no better entertainment,<br>In being Coriolanus.<br><br>Second Servingman:<br>Where's Cotus? my ma | MENENIUS: I had fondedsion with him; but either<br>Had boan to drink tongue to be those grodwis.<br><br>Second Citizen: |
+      | And       | And with the deeper than you can imagine.<br><br>CLARENCE:<br>I know it pleaseth neither of us well.<br><br>GLOUCESTER: | And thereupobized the blood that lead the painful out on't; tell you me not<br>whereit may commend me to Lo |
+      | We        | We were Marcies o' the stocks. Thou hast never in thy life<br>Show'd thy dear mother any courtesy,<br>When sh | We malk'd dissembt all this?<br><br>BRAKENBURY:<br>I know the sun<br>And faultles, the lords at Pomfrets, hame the |
+      | What      | What are you;<br>May I shall tell you. Lif rask'd to concine in<br>The consul and my friend, for joy was I had | What all his dreams, I wonderiot nor time to endmer trance.<br><br>CORIOLANUS:<br>What's the matter?<br><br>Messenger:<br>A |
+      | Sir,      | Sir, I cannot tell:<br>We must proceed as we do find the people.<br><br>Third Conspirator:<br>Uncle, what<br>Set me agai | Sir, we are under maliciously.<br><br>First Consider of curses forgot,<br>If you have you break his neck or hazard |
 
 
-- 모델 별 생성 결과 비교 (seed별 모델 생성 결과)  
-## Generated Text Samples
+    
+        - LSTM produces more consistent, grammatically natural sentences overall.  
+        - Sentences generated by RNN are often difficult to grasp the meaning, and are often grammatically unnatural.
+        - At the same seed and temperature, LSTM performs better than RNN. This is because the structure of LSTM maintains the context of long sequences better and is more efficient at processing long-term dependence. RNN can work in short contexts, but they often have difficulty processing long contexts.  
 
-여기에는 다양한 시드 문자열을 사용하여 생성된 텍스트 샘플을 LSTM과 RNN 모델로 비교한 결과를 제공합니다.
+3. Model generation results and interpretation by temperature 
 
-| Seed     | LSTM                                                                                         | RNN                                                                                          |
-|----------|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| ROMEO:   | 텍스트 예시 1 - LSTM                                                                          | 텍스트 예시 1 - RNN                                                                          |
-| JULIET:  | 텍스트 예시 2 - LSTM                                                                          | 텍스트 예시 2 - RNN                                                                          |
-| MACBETH: | 텍스트 예시 3 - LSTM                                                                          | 텍스트 예시 3 - RNN                                                                          |
-| HAMLET:  | 텍스트 예시 4 - LSTM                                                                          | 텍스트 예시 4 - RNN                                                                          |
-| OTHELLO: | 텍스트 예시 5 - LSTM                                                                          | 텍스트 예시 5 - RNN                                                                          |
-| Example: | "ROMEO: What light through yonder window breaks? It is the east, and Juliet is the sun." (LSTM)| "ROMEO: What light through yonder window breaks? It is the east, and Juliet is the sun." (RNN)|
+    #### Generated Text Samples by Temperature
 
+    - This is the result of comparing text samples generated at various temperature settings with LSTM and RNN models.
+    - The settings other than temperature are the same. (seed : "MENENIUS: ", length : 100)
 
-- temperature별 모델 생성 결과 및 해석 (다양한 온도를 시도하고, 온도가 어떤 차이를 만드는지, 왜 더 그럴듯한 결과를 생성하는 데 도움이 되는지에 대해 논의)  
-## Generated Text Samples by Temperature
+      | Temperature | LSTM                                                                                       | RNN                                                                                          |
+      |------|--------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+      | 0.5  | MENENIUS: 't thou were so sup bleare<br>is image of our dear Redeemer,<br>You straight are on your knees for pardon, | MENENIUS: there's no delight to pass away the time,<br>Unless to spy my shadow in the sun<br>And descant on mine own |
+      | 1.0  | MENENIUS: 'tA day, come:<br>We will be there before the stream o' the people;<br>And this shall seem, as partly in a | MENENIUS: there's nothing his old hands.<br><br>GLOUCESTER:<br>She morth<br>The wars for your high-danced, not free to bet |
+      | 1.5  | MENENIUS: as thou hatch'd us thus.<br>If it were so that our reward, when you were lost not dare I spilt mine own |MENENIUS: They read lectures that liberty?<br>I'll not meddle.<br><br>SICINIUS:<br>Peace!<br><br>First Servingman:<br>Did you pleas |
+      | 2.0  | MENENIUS: am known to me:<br>I now far us fall's his,<br>And with a sudden reinfortard my coining but<br>the blozes hav | MENENIUS: there's officfer<br>If anceet strongly.<br>I will, for by the frout<br>so.<br><br>GLOUCESTER:<br>I seal,<br>Conger, there |
 
-여기에는 다양한 온도 설정에서 생성된 텍스트 샘플을 LSTM과 RNN 모델로 비교한 결과를 제공합니다.
-
-| Temperature | LSTM                                                                                          | RNN                                                                                           |
-|-------------|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| 0.5         | 텍스트 예시 (온도 0.5) - LSTM                                                                  | 텍스트 예시 (온도 0.5) - RNN                                                                  |
-| 1.0         | 텍스트 예시 (온도 1.0) - LSTM                                                                  | 텍스트 예시 (온도 1.0) - RNN                                                                  |
-| 1.5         | 텍스트 예시 (온도 1.5) - LSTM                                                                  | 텍스트 예시 (온도 1.5) - RNN                                                                  |
-| 2.0         | 텍스트 예시 (온도 2.0) - LSTM                                                                  | 텍스트 예시 (온도 2.0) - RNN                                                                  |
-| Example:    | "ROMEO: What light through yonder window breaks? It is the east, and Juliet is the sun." (LSTM)| "ROMEO: What light through yonder window breaks? It is the east, and Juliet is the sun." (RNN)|
-- temperature의 결과에 따라서 결과 작성  
-- 
-
-
+      - **Temperature 0.5**: LSTM produces more consistent and grammatically natural text. RNN also produce decent results but contain some abnormal words.
+      - **Temperature 1.0**: Both models produce relatively natural text.
+      - **Temperature 1.5**: LSTM still produces relatively consistent text, RNN have many contextual errors.
+      - **Temperature 2.0**: Both models are significantly less consistent, but LSTM gives slightly better results.
+      - The lower the temperature value, the more consistent and natural text is produced, and the higher the temperature value, the greater the diversity, but the less consistent and grammatical accuracy is. In both models, the most appropriate temperature value seems to be 1.0.
 
 ## 5. Refecence
 
@@ -138,10 +146,10 @@ http://karpathy.github.io/2015/05/21/rnn-effectiveness/
 Dataset  
 https://pytorch.org/tutorials/beginner/data_loading_tutorial.html 
 
-Model
-https://pytorch.org/docs/stable/generated/torch.nn.RNN.html
-https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html
-https://data-science-hi.tistory.com/190
+Model  
+https://pytorch.org/docs/stable/generated/torch.nn.RNN.html  
+https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html  
+https://data-science-hi.tistory.com/190  
 
-Generate
+Generate  
 https://www.kdnuggets.com/2020/07/pytorch-lstm-text-generation-tutorial.html

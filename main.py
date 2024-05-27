@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -25,22 +26,23 @@ def train(model, trn_loader, device, criterion, optimizer, is_lstm=False):
     model.train()
     total_loss = 0
     for inputs, targets in trn_loader:
-        inputs, targets = inputs.to(device), targets.to(device)
+        inputs, targets = inputs.to(device).long(), targets.to(device).long()
         optimizer.zero_grad()
 
+        hidden = model.init_hidden(inputs.size(0))
         if is_lstm:
-            hidden = model.init_hidden(inputs.size(0))
             hidden = (hidden[0].to(device), hidden[1].to(device))
         else:
-            hidden = model.init_hidden(inputs.size(0)).to(device)        
+            hidden = hidden.to(device)       
 
         outputs, hidden = model(inputs, hidden)
-        outputs = outputs.view(-1, outputs.size(-1))  
-        targets = targets.view(-1)  
+        outputs = outputs.view(-1, outputs.size(-1))
+        targets = targets.view(-1)
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
+        
     trn_loss = total_loss / len(trn_loader)
 
     return trn_loss
@@ -59,13 +61,13 @@ def validate(model, val_loader, device, criterion, is_lstm=False):
     total_loss = 0
     with torch.no_grad():
         for inputs, targets in val_loader:
-            inputs, targets = inputs.to(device), targets.to(device)
+            inputs, targets = inputs.to(device).long(), targets.to(device).long()
 
+            hidden = model.init_hidden(inputs.size(0))
             if is_lstm:
-                hidden = model.init_hidden(inputs.size(0))
                 hidden = (hidden[0].to(device), hidden[1].to(device))
             else:
-                hidden = model.init_hidden(inputs.size(0)).to(device)
+                hidden = hidden.to(device)
                 
             outputs, hidden = model(inputs, hidden)
             outputs = outputs.view(-1, outputs.size(-1))  
@@ -113,18 +115,19 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     vocab_size = len(dataset.chars)
+    embedding_size = 128
     hidden_size = 256
-    num_layers = 2
+    num_layers = 3
 
     if args.lstm:
-        model = CharLSTM(vocab_size, hidden_size, vocab_size, num_layers).to(device)
+        model = CharLSTM(vocab_size, embedding_size, hidden_size, vocab_size, num_layers).to(device)
         optimizer = optim.AdamW(model.parameters(), lr=0.0001)
         is_lstm = True
         best_model_path = 'best_char_lstm.pth'
         plot_name = 'Training and Validation Loss of LSTM'
         plot_filename = 'lstm_loss_plot.png'
     elif args.rnn:
-        model = CharRNN(vocab_size, hidden_size, vocab_size, num_layers).to(device)
+        model = CharRNN(vocab_size, embedding_size, hidden_size, vocab_size, num_layers).to(device)
         optimizer = optim.AdamW(model.parameters(), lr=0.0001)
         is_lstm = False
         best_model_path = 'best_char_rnn.pth'
@@ -141,7 +144,7 @@ def main():
     best_val_loss = float('inf')
     best_epoch = -1
 
-    for epoch in range(num_epochs):
+    for epoch in tqdm(range(num_epochs)):
         trn_loss = train(model, train_loader, device, criterion, optimizer, is_lstm)
         val_loss = validate(model, validation_loader, device, criterion, is_lstm)
         train_losses.append(trn_loss)

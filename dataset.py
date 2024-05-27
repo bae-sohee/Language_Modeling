@@ -36,12 +36,9 @@ class Shakespeare(Dataset):
         input_seq = self.data_idx[idx:idx+self.seq_length]
         target_seq = self.data_idx[idx+1:idx+self.seq_length+1]
         
-        input_tensor = torch.zeros((self.seq_length, len(self.chars)), dtype=torch.float32)
+        input_tensor = torch.tensor(input_seq, dtype=torch.long)
         target_tensor = torch.tensor(target_seq, dtype=torch.long)
 
-        for i, char_idx in enumerate(input_seq):
-            input_tensor[i][char_idx] = 1.0
-        
         return input_tensor, target_tensor
 
 if __name__ == '__main__':
